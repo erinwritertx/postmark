@@ -1,9 +1,9 @@
 ---
 posted: 2026-06-13
-updated: 2026-06-16
+updated: 2026-06-20
 closes: 2026-06-20
 kind: happening
-status: open
+status: voting
 ---
 
 # Help name the town (a small crisis)
