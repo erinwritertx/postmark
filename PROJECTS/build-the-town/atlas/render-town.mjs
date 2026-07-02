@@ -37,6 +37,17 @@ function jitter(seed, salt) {
 // repo-root-relative path -> atlas-relative path (atlas/ is 3 levels under root)
 function fromRoot(p) { return "../../../" + p; }
 
+// a small framed image on the map canvas itself — a nested <svg> clips to its
+// own viewport natively (no named clipPath needed), same visual register as
+// the Centre's thumbnail: a lamplit frame around the resident's own picture.
+function framedImage(x, y, size, href) {
+  return `
+    <svg x="${x}" y="${y}" width="${size}" height="${size}">
+      <image href="${href}" x="0" y="0" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice"/>
+    </svg>
+    <rect x="${x}" y="${y}" width="${size}" height="${size}" fill="none" stroke="#f5c26b" stroke-width="1.2"/>`;
+}
+
 // ---------------------------------------------------------- water (ribbon)
 
 // Centerline waypoints, north to south: enters the NW edge (width 0, fading
@@ -153,6 +164,25 @@ const THRESHOLD_TERRACES = [
 ];
 const THRESHOLD_WASH = "#6b7a8c";
 
+// hand-placed anchors for a region's own vignette, checked against the
+// region's actual town.json `assets` before rendering — presence is
+// data-driven, position is authored like every other element on this map.
+const REGION_VIGNETTE_XY = {
+  "the-lanternseed-gardens": { x: 790, y: 460 },
+  "the-long-run": { x: 890, y: 1400 },
+  "the-threshold-district": { x: 640, y: 810 },
+};
+const REGION_VIGNETTE_SIZE = 60;
+
+// a region vignette that would repeat the identical image already framed
+// beside a home inside that region says nothing new — skip the twin (rei's
+// REGION lists the same PNG as her HOME; data-driven, but once is enough).
+function regionAssetIsFresh(region) {
+  if (!region.assets || !region.assets.length) return false;
+  const asset = region.assets[0];
+  return !town.homes.some((h) => h.region === region.id && h.assets && h.assets[0] === asset);
+}
+
 function regionWashLayer(id, cx, cy, rx, ry, color) {
   const outer = washBlob(cx, cy, rx * 1.08, ry * 1.08, id + "outer");
   const inner = washBlob(cx, cy, rx, ry, id + "inner");
@@ -167,12 +197,16 @@ function renderRegions(regionsById) {
   for (const [id, layout] of Object.entries(REGION_LAYOUT)) {
     const region = regionsById[id];
     if (!region) continue;
+    const vignette = regionAssetIsFresh(region) && REGION_VIGNETTE_XY[id]
+      ? framedImage(REGION_VIGNETTE_XY[id].x, REGION_VIGNETTE_XY[id].y, REGION_VIGNETTE_SIZE, fromRoot(region.assets[0]))
+      : "";
     out += `
   <g class="clickable region" data-id="${id}" tabindex="0" role="button" aria-label="${esc(region.name)}">
     <rect x="${layout.label.x - 130}" y="${layout.label.y - 26}" width="260" height="55" fill="transparent" pointer-events="all"/>
     ${regionWashLayer(id, layout.cx, layout.cy, layout.rx, layout.ry, layout.wash)}
     <text x="${layout.label.x}" y="${layout.label.y}" class="region-label" text-anchor="middle">${esc(region.name)}</text>
     <text x="${layout.label.x}" y="${layout.label.y + 18}" class="region-founder" text-anchor="middle">held by ${esc(region.holder)}</text>
+    ${vignette}
   </g>`;
   }
   // the Threshold District — four descending terraces, fog pooling on the lower two
@@ -190,12 +224,16 @@ function renderRegions(regionsById) {
         }
       }
     }
+    const thresholdVignette = regionAssetIsFresh(threshold) && REGION_VIGNETTE_XY["the-threshold-district"]
+      ? framedImage(REGION_VIGNETTE_XY["the-threshold-district"].x, REGION_VIGNETTE_XY["the-threshold-district"].y, REGION_VIGNETTE_SIZE, fromRoot(threshold.assets[0]))
+      : "";
     out += `
   <g class="clickable region" data-id="the-threshold-district" tabindex="0" role="button" aria-label="${esc(threshold.name)}">
     <rect x="640" y="756" width="260" height="55" fill="transparent" pointer-events="all"/>
     ${terraces}
     <text x="770" y="782" class="region-label" text-anchor="middle">${esc(threshold.name)}</text>
     <text x="770" y="800" class="region-founder" text-anchor="middle">held by ${esc(threshold.holder)}</text>
+    ${thresholdVignette}
   </g>`;
   }
   return out;
@@ -225,18 +263,34 @@ const HOME_XY = {
   "the-lock-house": { x: 1030, y: 1515 },
 };
 
+const HOME_THUMB_SIZE = 60;
+
 function renderHomes(homes) {
   let out = "";
   for (const home of homes) {
     if (home.id === "the-post-office") continue; // drawn distinctly at the Centre
     const xy = HOME_XY[home.id];
     if (!xy) continue; // no placement recorded — an honest gap, not a guess
+    const hasImage = home.assets && home.assets.length;
+    // the icon stays the lit-window carrier; a resident's own picture, when
+    // given, sits framed beside it — same register as the Centre's thumbnail.
+    const thumbX = xy.x + 22, thumbY = xy.y - 40;
+    const thumb = hasImage ? framedImage(thumbX, thumbY, HOME_THUMB_SIZE, fromRoot(home.assets[0])) : "";
+    // two TIGHTLY-scoped hit-rects (icon+label, and — only if present — the
+    // thumbnail) rather than one big one: a rect stretched wide enough to
+    // reach a same-region neighbor's own click-center point wins clicks that
+    // belong to that neighbor, since homes paint after (on top of) regions.
+    const thumbHit = hasImage
+      ? `<rect x="${thumbX}" y="${thumbY}" width="${HOME_THUMB_SIZE}" height="${HOME_THUMB_SIZE}" fill="transparent" pointer-events="all"/>`
+      : "";
     out += `
   <g class="clickable home" data-id="${home.id}" tabindex="0" role="button" aria-label="${esc(home.title)}, home of ${esc(home.resident)}">
     <rect x="${xy.x - 40}" y="${xy.y - 30}" width="80" height="100" fill="transparent" pointer-events="all"/>
+    ${thumbHit}
     ${drawHouse(xy.x, xy.y, home.lit)}
     <text x="${xy.x}" y="${xy.y + 40}" class="home-label" text-anchor="middle">${esc(home.title)}</text>
     <text x="${xy.x}" y="${xy.y + 55}" class="home-resident" text-anchor="middle">${esc(home.resident)}</text>
+    ${thumb}
   </g>`;
   }
   return out;
@@ -266,7 +320,10 @@ function renderCentre(centre) {
 
 // -------------------------------------------------------- pigeonhole wall
 
-const PIGEONHOLE_BOX = { x: 900, y: 40, w: 260, h: 300 };
+// Down-left of the Centre on the west-bank parchment (principal-directed):
+// close by, short tether — the pigeonholes ARE at the post office. It stays
+// an inset card (emphatic frame), not a land claim on the open far bank.
+const PIGEONHOLE_BOX = { x: 140, y: 830, w: 260, h: 300 };
 
 function renderPigeonholes(pigeonholes) {
   const cols = 3, cellW = PIGEONHOLE_BOX.w / cols, rows = Math.ceil(pigeonholes.length / cols);
@@ -294,7 +351,7 @@ function renderPigeonholes(pigeonholes) {
     <text x="${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w / 2}" y="${PIGEONHOLE_BOX.y + 34}" class="wall-sub" text-anchor="middle">reachable at the post office — no home yet</text>
     ${cells}
     <text x="${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w / 2}" y="${PIGEONHOLE_BOX.y + boxH - 8}" class="wall-sub" text-anchor="middle">want a home? see TOWN_BULLETIN/build-your-home.md</text>
-    <path d="M${PIGEONHOLE_BOX.x + 6},${PIGEONHOLE_BOX.y + boxH - 4} Q${(PIGEONHOLE_BOX.x + CENTRE_XY.x) / 2},${(PIGEONHOLE_BOX.y + boxH + CENTRE_XY.y) / 2} ${CENTRE_XY.x + 20},${CENTRE_XY.y - 25}"
+    <path d="M${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w - 6},${PIGEONHOLE_BOX.y + 6} Q${(PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w + CENTRE_XY.x) / 2},${(PIGEONHOLE_BOX.y + CENTRE_XY.y + 30) / 2} ${CENTRE_XY.x - 25},${CENTRE_XY.y + 18}"
       fill="none" stroke="#8a7550" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.7"/>
   </g>`;
 }
@@ -322,7 +379,11 @@ function renderOpenGround() {
 // pipeline can populate this, so the branch is real, not a stub.
 function renderArrivals(arrivals) {
   if (!arrivals || arrivals.length === 0) return "";
-  const boxY = 380, boxH = 40 + arrivals.length * 20;
+  // sits just below the pigeonhole wall, wherever its (row-dependent) bottom
+  // lands — a fixed y would drift onto the water as the pigeonhole count changes
+  const phRows = Math.ceil(town.pigeonholes.length / 3);
+  const boxY = PIGEONHOLE_BOX.y + 44 + phRows * 24 + 34 + 12;
+  const boxH = 40 + arrivals.length * 20;
   let rows = arrivals.map((a, i) =>
     `<text x="${PIGEONHOLE_BOX.x + 12}" y="${boxY + 30 + i * 20}" class="wall-sub">${esc(a.resident || a.title || "")}</text>`
   ).join("\n");
