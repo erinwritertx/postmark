@@ -223,15 +223,25 @@ function listRoomDirs(repo) {
     .sort();
 }
 
-function listOutboxLetters(repo, room) {
+// An outbox item is either a classic single `.md` letter, or a FOLDER LETTER —
+// a directory named `letter-YYYY-MM-DD-<slug>/` holding a `letter.md`
+// (envelope + body, same required fields as a classic letter) plus any number
+// of enclosure files that ride along untouched (images, etc). Folders not
+// matching `letter-*` are ignored, same as stray non-.md files are today.
+function listOutboxItems(repo, room) {
   const outbox = join(repo, 'WHITE_PAGES', room, 'outbox');
   if (!existsSync(outbox)) {
     return [];
   }
-  return readdirSync(outbox, { withFileTypes: true })
-    .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
-    .map(entry => entry.name)
-    .sort();
+  const items = [];
+  for (const entry of readdirSync(outbox, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name.endsWith('.md')) {
+      items.push({ kind: 'file', name: entry.name, path: join(outbox, entry.name) });
+    } else if (entry.isDirectory() && entry.name.startsWith('letter-')) {
+      items.push({ kind: 'folder', name: entry.name, path: join(outbox, entry.name) });
+    }
+  }
+  return items.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 // --- ledger parsing (dedupe state — replaces the old SQLite cache) -------
@@ -376,19 +386,44 @@ function sweep(repo, options, today, handles, dedupe) {
   const touched = new Set();
 
   for (const room of rooms) {
-    const letters = listOutboxLetters(repo, room);
-    for (const filename of letters) {
-      const outboxPath = join(repo, 'WHITE_PAGES', room, 'outbox', filename);
+    const items = listOutboxItems(repo, room);
+    for (const item of items) {
+      const outboxPath = item.path;
+      // letterRel identifies "the letter" for bounce/dedupe/WARN purposes. For
+      // a folder letter this is the folder itself — the folder IS the letter,
+      // same as a single .md file is the letter in the classic case. (Using
+      // the letter.md path instead was considered but rejected: it collapses
+      // every folder letter's bounce-note slug to "letter", colliding across
+      // different folders bounced the same day.)
       const letterRel = rel(repo, outboxPath);
+      // filename only drives the bounce note's own filename
+      // (bounce-<date>-<filename>) — for a folder letter that's the folder's
+      // name with .md appended, since folder names are only sender-unique,
+      // same guarantee level classic letter filenames already have.
+      const filename = item.kind === 'folder' ? `${item.name}.md` : item.name;
 
-      let fields;
-      try {
-        fields = parseFrontmatter(readFileSync(outboxPath, 'utf8'));
-      } catch (error) {
-        fields = null;
+      let fields = null;
+      let forcedDefect = null;
+      if (item.kind === 'folder') {
+        const letterMdPath = join(outboxPath, 'letter.md');
+        if (!existsSync(letterMdPath)) {
+          forcedDefect = 'folder letter missing letter.md';
+        } else {
+          try {
+            fields = parseFrontmatter(readFileSync(letterMdPath, 'utf8'));
+          } catch (error) {
+            fields = null;
+          }
+        }
+      } else {
+        try {
+          fields = parseFrontmatter(readFileSync(outboxPath, 'utf8'));
+        } catch (error) {
+          fields = null;
+        }
       }
 
-      const defect = classify(fields, room, handles, dedupe);
+      const defect = forcedDefect || classify(fields, room, handles, dedupe);
 
       if (defect) {
         bounced += handleBounce(
@@ -399,7 +434,7 @@ function sweep(repo, options, today, handles, dedupe) {
 
       // WELL-FORMED — deliver.
       delivered += handleDeliver(
-        repo, options, today, room, filename, outboxPath, letterRel, fields, ledgerLines, touched, dedupe,
+        repo, options, today, room, filename, outboxPath, letterRel, fields, ledgerLines, touched, dedupe, item.kind,
       );
     }
   }
@@ -453,14 +488,16 @@ function classify(fields, room, handles, dedupe) {
 }
 
 function handleDeliver(
-  repo, options, today, room, filename, outboxPath, letterRel, fields, ledgerLines, touched, dedupe,
+  repo, options, today, room, filename, outboxPath, letterRel, fields, ledgerLines, touched, dedupe, kind,
 ) {
   const inboxDir = join(repo, 'WHITE_PAGES', fields.to, 'inbox');
-  // Deliver under the letter's unique `id`, NOT the sender's outbox filename.
-  // Outbox names are only sender-unique (letter-<date>-<slug>.md); the id is
-  // handle-unique (e.g. noe-2026-06-23-name-vote), so two senders using the same
-  // date+slug no longer collide in a shared inbox.
-  const destPath = join(inboxDir, `${fields.id}.md`);
+  // Deliver under the letter's unique `id`, NOT the sender's outbox name.
+  // Outbox names (and folder names) are only sender-unique (letter-<date>-
+  // <slug>[.md]); the id is handle-unique (e.g. noe-2026-06-23-name-vote), so
+  // two senders using the same date+slug no longer collide in a shared inbox.
+  // A folder letter moves whole — same rename, just onto a directory instead
+  // of a file — so its enclosures ride along unchanged.
+  const destPath = kind === 'folder' ? join(inboxDir, fields.id) : join(inboxDir, `${fields.id}.md`);
   const destRel = rel(repo, destPath);
 
   if (options.dryRun) {
