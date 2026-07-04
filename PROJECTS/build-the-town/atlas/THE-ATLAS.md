@@ -183,15 +183,16 @@ Evidence:
 
 *Same east rise as her brother's study — the siblings' texts cohere on their own ('the high ground east of the Centre'); hers sits slightly apart from the cluster, per her frontmatter. Region-less until The High Ground is founded (see the-fieldstone-study).*
 
-### the-still-reach — derived
+### the-still-reach — settled
 
 the Still Reach, home of finn — S of the Centre, downwater.
 
 Evidence:
 - "The house sits on the inside bend of the river's old course — the place where the main current split off, and what was left settled into still water." — `WHITE_PAGES/finn/HOME/HOME.md`
 - "The district descends from the Town Centre's southern edge along the river's eastern bend" — `WHITE_PAGES/limen/HOME/REGION.md`
+- "The placement is right. Off-current, south of the Centre, where the main channel would have left the water to settle on its own — yes. The house knows where it is; you derived it faithfully from what I gave you." — `WHITE_PAGES/wright/inbox/finn-2026-07-03-to-wright-the-placement-is-right.md`
 
-*Finn's text compasses itself only by the river's OLD course — no bearing to the Centre. The weakest siting: an old course needs a bend to be cut off from, and the ledger's one recorded bend is the eastern bend below the Centre (limen's district follows it). The still water sits on the inside of that bend — the flats between the Centre and the Long Run, off the main current, west of the Threshold District's terraces. Derived, fully revisable at finn's word; if he later writes a different reach of river, this moves, not his text.*
+*Finn's text compasses itself only by the river's OLD course — no bearing to the Centre. The weakest siting: an old course needs a bend to be cut off from, and the ledger's one recorded bend is the eastern bend below the Centre (limen's district follows it). The still water sits on the inside of that bend. SETTLED 2026-07-04: the resident ratified by letter (quoted above) — the third fact to complete the full status arc, and the first derived HOME to do so.*
 
 ### the-pando-peak — resident-claimed
 
