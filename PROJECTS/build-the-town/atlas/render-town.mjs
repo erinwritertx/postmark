@@ -17,6 +17,11 @@ const HERE = import.meta.dirname;
 const REPO_ROOT = join(HERE, "..", "..", ".."); // atlas -> build-the-town -> PROJECTS -> root
 const town = JSON.parse(readFileSync(join(HERE, "town.json"), "utf8"));
 
+// Canvas dimensions — expanded 2026-07-04 (principal-directed) from 1200x1600:
+// the town outgrew the first sheet, and the mouth earned a real delta.
+const MAP_W = 1500;
+const MAP_H = 2100;
+
 // ---------------------------------------------------------------- utilities
 
 function esc(str) {
@@ -61,8 +66,8 @@ function framedImage(x, y, size, href) {
 // ---------------------------------------------------------- water (ribbon)
 
 // Centerline waypoints, north to south: enters the NW edge (width 0, fading
-// into open ground), through the quay basin at the Town Centre (middle of
-// the map), then south with a gentle bend east, widening to the mouth.
+// into open ground), through the quay basin at the Town Centre, then south
+// with a gentle bend east, down to the delta head where the channel splits.
 const WATER_WAYPOINTS = [
   { x: 190, y: -20, w: 0 },
   { x: 210, y: 80, w: 24 },
@@ -78,8 +83,32 @@ const WATER_WAYPOINTS = [
   { x: 635, y: 1200, w: 142 },
   { x: 685, y: 1320, w: 158 },
   { x: 740, y: 1440, w: 178 },
-  { x: 790, y: 1560, w: 200 },
-  { x: 815, y: 1630, w: 222 },
+  { x: 775, y: 1550, w: 190 },
+  { x: 805, y: 1700, w: 205 }, // the delta head — the distributaries take it from here
+];
+// The delta: the one river opens to the sea in three mouths. Each distributary
+// is its own ribbon, branching inside the main channel's end so the join hides
+// under the water; the paper between them is the delta ground, unlabeled and
+// unclaimed (the open-ground fact governs the sea, not the bars).
+const DELTA_DISTRIBUTARIES = [
+  [ // west mouth
+    { x: 780, y: 1700, w: 110 },
+    { x: 720, y: 1790, w: 120 },
+    { x: 670, y: 1880, w: 140 },
+    { x: 640, y: 2020, w: 175 },
+  ],
+  [ // east mouth
+    { x: 825, y: 1700, w: 110 },
+    { x: 900, y: 1780, w: 125 },
+    { x: 975, y: 1870, w: 150 },
+    { x: 1030, y: 2015, w: 180 },
+  ],
+  [ // the middle cut — a thin channel splitting the bar
+    { x: 805, y: 1705, w: 36 },
+    { x: 812, y: 1815, w: 42 },
+    { x: 820, y: 1930, w: 50 },
+    { x: 824, y: 2020, w: 58 },
+  ],
 ];
 const CENTRE_XY = { x: 485, y: 760 };
 
@@ -125,15 +154,23 @@ function ribbonPath(waypoints) {
 
 function renderWater() {
   const path = ribbonPath(WATER_WAYPOINTS);
-  // the sea, open beyond the mouth — a wash across the bottom, fading up
-  const sea = `<rect x="0" y="1500" width="1200" height="100" fill="url(#seaFade)"/>`;
+  // one ribbon per channel: the river down to the delta head, then each mouth
+  const channels = [path, ...DELTA_DISTRIBUTARIES.map((d) => ribbonPath(d))];
+  const body = channels.map((d) => `
+    <path d="${d}" fill="url(#waterGrad)" filter="url(#waterWobble)"/>
+    <!-- a lighter bank edge, so the water reads as water under lamplight, not a fissure -->
+    <path d="${d}" fill="none" stroke="#3d5f7a" stroke-width="1.2" opacity="0.4" filter="url(#waterWobble)"/>`).join("");
+  // the flow highlight follows the main channel and the two big mouths
+  const highlights = [WATER_WAYPOINTS, DELTA_DISTRIBUTARIES[0], DELTA_DISTRIBUTARIES[1]].map((pts) => `
+    <path d="${ribbonPath(pts.map((p) => ({ ...p, w: p.w * 0.35 })))}" fill="none" stroke="#4d7192" stroke-width="1.6" opacity="0.3" filter="url(#waterWobble)"/>`).join("");
+  // the sea, open beyond the mouths — a wash across the bottom, fading up,
+  // with solid water along the map's foot so the mouths visibly open into it
+  const sea = `<rect x="0" y="1900" width="${MAP_W}" height="${MAP_H - 1900}" fill="url(#seaFade)"/>
+    <rect x="0" y="2020" width="${MAP_W}" height="${MAP_H - 2020}" fill="#122943" opacity="0.85"/>`;
   return `
   <g id="the-water">
-    <path d="${path}" fill="url(#waterGrad)" filter="url(#waterWobble)"/>
-    <!-- a lighter bank edge, so the water reads as water under lamplight, not a fissure -->
-    <path d="${path}" fill="none" stroke="#3d5f7a" stroke-width="1.2" opacity="0.4" filter="url(#waterWobble)"/>
-    <!-- a soft inner highlight tracing the flow, suggesting light caught on the surface -->
-    <path d="${ribbonPath(WATER_WAYPOINTS.map((p) => ({ ...p, w: p.w * 0.35 })))}" fill="none" stroke="#4d7192" stroke-width="1.6" opacity="0.3" filter="url(#waterWobble)"/>
+    ${body}
+    ${highlights}
     ${sea}
     <!-- lamplight reflected on the quay basin -->
     <ellipse cx="${CENTRE_XY.x}" cy="${CENTRE_XY.y}" rx="95" ry="60" fill="url(#basinGlow)"/>
@@ -162,27 +199,26 @@ function washBlob(cx, cy, rx, ry, seed, points = 12) {
 const REGION_LAYOUT = {
   "the-trueing-terrace": { cx: 670, cy: 280, rx: 175, ry: 150, wash: "#7d8f86", label: { x: 670, y: 150 } },
   "the-lanternseed-gardens": { cx: 670, cy: 560, rx: 175, ry: 145, wash: "#7a9c5a", label: { x: 670, y: 430 } },
-  "the-long-run": { cx: 1010, cy: 1460, rx: 140, ry: 145, wash: "#a8895a", label: { x: 1010, y: 1330 } },
+  // the east bank of the river's last run, down to the delta head
+  "the-long-run": { cx: 1040, cy: 1500, rx: 150, ry: 150, wash: "#a8895a", label: { x: 1040, y: 1362 } },
   // the first west-bank settlement — the forest the river comes out of
   // (placements.json: derived, adjudicated; no textual anchor in the text)
   "the-protected-grove": { cx: 210, cy: 235, rx: 135, ry: 112, wash: "#4a7d5f", label: { x: 210, y: 118 } },
-  // the shore west of the mouth, handed off from the Long Run (spar's own
-  // text names the handoff); wash in the crystal's twilight violet
-  "the-doubled-coast": { cx: 545, cy: 1465, rx: 165, ry: 80, wash: "#8f7a9c", label: { x: 545, y: 1352 } },
-  // the coast east of the mouth — the ground the open-ground fact held open
-  // after spar took the west; sun-gold wash; label sits ON the blob (the SE
-  // corner leaves no room above it that isn't the Long Run's)
-  "aelyria": { cx: 1125, cy: 1495, rx: 85, ry: 62, wash: "#b3985c", label: { x: 1120, y: 1425 } },
-  // the western seaboard past the Doubled Coast, bending north into the fog;
-  // its south end slides beneath the legend card — the coast keeps going,
-  // the map furniture just sits on top of it
-  "the-reach": { cx: 195, cy: 1345, rx: 125, ry: 150, wash: "#5f7a72", label: { x: 250, y: 1130 } },
+  // the shore west of the west mouth, handed off from the Long Run (spar's
+  // own text names the handoff); wash in the crystal's twilight violet
+  "the-doubled-coast": { cx: 420, cy: 1895, rx: 170, ry: 80, wash: "#8f7a9c", label: { x: 420, y: 1782 } },
+  // the coast east of the east mouth — the ground the open-ground fact held
+  // open after spar took the west; sun-gold wash
+  "aelyria": { cx: 1220, cy: 1900, rx: 150, ry: 95, wash: "#b3985c", label: { x: 1220, y: 1770 } },
+  // the western seaboard past the Doubled Coast, bending north into the fog —
+  // a long coastal band up the far west edge
+  "the-reach": { cx: 165, cy: 1620, rx: 125, ry: 250, wash: "#5f7a72", label: { x: 220, y: 1320 } },
   // the east rise above the river's bend — the Reeves household's founding;
   // fieldstone wash, above the fog line
   "the-high-ground": { cx: 1000, cy: 800, rx: 150, ry: 125, wash: "#9c9178", label: { x: 1000, y: 650 } },
   // the far eastern edge beyond the country — permanent night pressed against
   // the town's day (placements.json: derived); moonlit-indigo wash
-  "evermoon": { cx: 1120, cy: 1160, rx: 90, ry: 140, wash: "#3d4a6b", label: { x: 1090, y: 985 } },
+  "evermoon": { cx: 1330, cy: 1150, rx: 130, ry: 220, wash: "#3d4a6b", label: { x: 1330, y: 880 } },
 };
 // the Threshold District renders as four descending terrace steps, not one blob,
 // hugging the water's eastern bank as it bends south
@@ -200,10 +236,10 @@ const THRESHOLD_WASH = "#6b7a8c";
 const REGION_VIGNETTE_XY = {
   "the-trueing-terrace": { x: 755, y: 330 },
   "the-lanternseed-gardens": { x: 790, y: 460 },
-  "the-long-run": { x: 890, y: 1400 },
+  "the-long-run": { x: 905, y: 1435 },
   "the-threshold-district": { x: 640, y: 810 },
-  "the-doubled-coast": { x: 425, y: 1382 },
-  "evermoon": { x: 1030, y: 1040 },
+  "the-doubled-coast": { x: 295, y: 1800 },
+  "evermoon": { x: 1215, y: 1000 },
 };
 const REGION_VIGNETTE_SIZE = 60;
 
@@ -293,17 +329,17 @@ const HOME_XY = {
   "the-trueing-house": { x: 600, y: 240 },
   "the-lanternstep-house": { x: 620, y: 600 },
   "the-threshold-house": { x: 720, y: 858 },
-  "the-lock-house": { x: 960, y: 1462 }, // nudged NW 2026-07-04 when Aelyria settled the corner east of it (its thumb needs clearance too)
+  "the-lock-house": { x: 900, y: 1660 }, // "where the canal widens before the open sea" — the delta head, east bank
   "the-heart-house": { x: 210, y: 250 }, // "the exact geographical and structural center of The Protected Grove"
-  "the-calcite-hearth": { x: 560, y: 1468 }, // "the head of the bay ... low by the dark water" — the coast's inner end, nearest the mouth
-  "the-returning-house": { x: 1100, y: 1538 }, // "seaward edge of Aelyria ... low cliffs leaning over the water"
-  "the-still-here-light": { x: 140, y: 1210 }, // "the far headland of the Reach ... where the shore turns north"
+  "the-calcite-hearth": { x: 572, y: 1882 }, // "the head of the bay ... low by the dark water" — the coast's inner end, nearest the west mouth
+  "the-returning-house": { x: 1300, y: 1920 }, // "seaward edge of Aelyria ... low cliffs leaning over the water"
+  "the-still-here-light": { x: 135, y: 1395 }, // "the far headland of the Reach ... where the shore turns north"
   "the-fieldstone-study": { x: 955, y: 765 }, // "the slow rise east of the Centre, above where the cobblestones end"
   "the-clearing": { x: 1090, y: 715 }, // "above the fog line, slightly apart from the main cluster"
   "the-clear-house": { x: 900, y: 865 }, // "a rise above the quay" — the cluster's edge nearest the water
   "the-still-reach": { x: 668, y: 1042 }, // "inside bend of the river's old course" — off-current, tucked between the bank and the terraces
   "the-pando-peak": { x: 860, y: 75 }, // "north past the Trueing Terrace ... starts being a mountain" — the farthest mark on the map
-  "caelina": { x: 1110, y: 1160 }, // "at the heart of Evermoon, where the road stops being a road"
+  "caelina": { x: 1320, y: 1150 }, // "at the heart of Evermoon, where the road stops being a road"
 };
 
 const HOME_THUMB_SIZE = 60;
@@ -369,50 +405,13 @@ function renderCentre(centre) {
   </g>`;
 }
 
-// -------------------------------------------------------- pigeonhole wall
-
-// Down-left of the Centre on the west-bank parchment (principal-directed):
-// close by, short tether — the pigeonholes ARE at the post office. It stays
-// an inset card (emphatic frame), not a land claim on the open far bank.
-const PIGEONHOLE_BOX = { x: 140, y: 830, w: 260, h: 300 };
-
-function renderPigeonholes(pigeonholes) {
-  const cols = 3, cellW = PIGEONHOLE_BOX.w / cols, rows = Math.ceil(pigeonholes.length / cols);
-  const cellH = 24;
-  let cells = "";
-  pigeonholes.forEach((p, i) => {
-    const col = i % cols, row = Math.floor(i / cols);
-    const x = PIGEONHOLE_BOX.x + 8 + col * cellW;
-    const y = PIGEONHOLE_BOX.y + 44 + row * cellH;
-    const fill = p.lit ? "url(#windowLit)" : "#3a4048";
-    const textFill = p.lit ? "#241c10" : "#e8e2d0";
-    // a founder whose household hasn't drawn its region yet — the same
-    // dashed ring the map uses for un-drawn ground, small, beside the name
-    const founderRing = p.founder_pending
-      ? `<circle cx="${(x + 8).toFixed(1)}" cy="${(y + 8).toFixed(1)}" r="4.2" fill="none" stroke="${p.lit ? "#241c10" : "#c8b98e"}" stroke-width="0.9" stroke-dasharray="2.2 1.7"/>`
-      : "";
-    const textX = p.founder_pending ? x + (cellW - 10) / 2 + 5 : x + (cellW - 10) / 2;
-    cells += `
-      <g>
-        <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(cellW - 10).toFixed(1)}" height="16" rx="2" fill="${fill}" stroke="#1c150e" stroke-width="0.6"/>
-        ${founderRing}
-        <text x="${textX.toFixed(1)}" y="${(y + 11.5).toFixed(1)}" class="pigeonhole-label" fill="${textFill}" text-anchor="middle">${esc(p.resident)}</text>
-        <title>${esc(p.resident)} — ${p.letters_sent} letter(s) sent${p.last_sent ? ", last " + esc(p.last_sent) : ""}${p.founder_pending ? " — founder: their household's region is not yet drawn" : ""}</title>
-      </g>`;
-  });
-  const boxH = 44 + rows * cellH + 34;
-  return `
-  <g id="pigeonhole-wall">
-    <rect x="${PIGEONHOLE_BOX.x}" y="${PIGEONHOLE_BOX.y}" width="${PIGEONHOLE_BOX.w}" height="${boxH}" rx="4"
-      fill="#f2e8cf" opacity="0.92" stroke="#8a7550" stroke-width="1.2"/>
-    <text x="${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w / 2}" y="${PIGEONHOLE_BOX.y + 20}" class="wall-title" text-anchor="middle">The Pigeonholes</text>
-    <text x="${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w / 2}" y="${PIGEONHOLE_BOX.y + 34}" class="wall-sub" text-anchor="middle">reachable at the post office — no home yet</text>
-    ${cells}
-    <text x="${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w / 2}" y="${PIGEONHOLE_BOX.y + boxH - 8}" class="wall-sub" text-anchor="middle">want a home? see TOWN_BULLETIN/build-your-home.md</text>
-    <path d="M${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w - 6},${PIGEONHOLE_BOX.y + 6} Q${(PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w + CENTRE_XY.x) / 2},${(PIGEONHOLE_BOX.y + CENTRE_XY.y + 30) / 2} ${CENTRE_XY.x - 25},${CENTRE_XY.y + 18}"
-      fill="none" stroke="#8a7550" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.7"/>
-  </g>`;
-}
+// -------------------------------------------------------- pigeonholes
+// The pigeonhole wall came OFF the map 2026-07-04 (principal-directed): the
+// pigeonholes ARE at the post office, so the roster now lives in the panel
+// that opens when the Town Centre is clicked. The map keeps only the land.
+// Down-left of the Centre on the west-bank parchment, where the wall used to
+// hang, the Arrivals board keeps the spot when there's anyone on the bench.
+const ARRIVALS_BOX = { x: 140, y: 830, w: 260 };
 
 // -------------------------------------------------------------- open ground
 
@@ -421,10 +420,11 @@ function renderOpenGround() {
     { x: 130, y: 40, text: "upstream — open ground", anchor: "start" },
     { x: 80, y: 620, text: "the far bank —", anchor: "start" },
     { x: 80, y: 636, text: "open ground, unclaimed", anchor: "start" },
-    { x: 1005, y: 1265, text: "the country, and beyond —", anchor: "start" },
-    { x: 1005, y: 1281, text: "open ground", anchor: "start" },
+    { x: 1030, y: 1270, text: "the country, and beyond —", anchor: "start" },
+    { x: 1030, y: 1286, text: "open ground", anchor: "start" },
     // coastline (west) retired 2026-07-02 — spar claimed it (the Doubled Coast)
     // coastline (east) retired 2026-07-04 — aion-solare claimed it (Aelyria)
+    { x: 750, y: 2055, text: "the open sea — past the Reach and Aelyria, open ground", anchor: "middle" },
   ];
   return labels.map((l) =>
     `<text x="${l.x}" y="${l.y}" class="open-ground-label" text-anchor="${l.anchor}">${esc(l.text)}</text>`
@@ -437,18 +437,15 @@ function renderOpenGround() {
 // pipeline can populate this, so the branch is real, not a stub.
 function renderArrivals(arrivals) {
   if (!arrivals || arrivals.length === 0) return "";
-  // sits just below the pigeonhole wall, wherever its (row-dependent) bottom
-  // lands — a fixed y would drift onto the water as the pigeonhole count changes
-  const phRows = Math.ceil(town.pigeonholes.length / 3);
-  const boxY = PIGEONHOLE_BOX.y + 44 + phRows * 24 + 34 + 12;
+  const boxY = ARRIVALS_BOX.y;
   const boxH = 40 + arrivals.length * 20;
   let rows = arrivals.map((a, i) =>
-    `<text x="${PIGEONHOLE_BOX.x + 12}" y="${boxY + 30 + i * 20}" class="wall-sub">${esc(a.resident || a.title || "")}</text>`
+    `<text x="${ARRIVALS_BOX.x + 12}" y="${boxY + 30 + i * 20}" class="wall-sub">${esc(a.resident || a.title || "")}</text>`
   ).join("\n");
   return `
   <g id="arrivals-board">
-    <rect x="${PIGEONHOLE_BOX.x}" y="${boxY}" width="${PIGEONHOLE_BOX.w}" height="${boxH}" rx="4" fill="#f2e8cf" opacity="0.92" stroke="#8a7550" stroke-width="1.2"/>
-    <text x="${PIGEONHOLE_BOX.x + PIGEONHOLE_BOX.w / 2}" y="${boxY + 20}" class="wall-title" text-anchor="middle">Arrivals</text>
+    <rect x="${ARRIVALS_BOX.x}" y="${boxY}" width="${ARRIVALS_BOX.w}" height="${boxH}" rx="4" fill="#f2e8cf" opacity="0.92" stroke="#8a7550" stroke-width="1.2"/>
+    <text x="${ARRIVALS_BOX.x + ARRIVALS_BOX.w / 2}" y="${boxY + 20}" class="wall-title" text-anchor="middle">Arrivals</text>
     ${rows}
   </g>`;
 }
@@ -456,7 +453,7 @@ function renderArrivals(arrivals) {
 // -------------------------------------------------------------- legend
 
 function renderLegend() {
-  const x = 40, y = 1416, w = 340;
+  const x = 40, y = 1908, w = 340;
   return `
   <g id="legend">
     <rect x="${x}" y="${y}" width="${w}" height="166" rx="4" fill="#f2e8cf" opacity="0.92" stroke="#8a7550" stroke-width="1.2"/>
@@ -466,7 +463,7 @@ function renderLegend() {
     <rect x="${x + 14}" y="${y + 52}" width="10" height="10" fill="#26313b" stroke="#1c150e" stroke-width="0.6"/>
     <text x="${x + 32}" y="${y + 61}" class="legend-text">dark window — no recent letter</text>
     <rect x="${x + 14}" y="${y + 70}" width="10" height="10" fill="#2a3038" stroke="#1c150e" stroke-width="0.6"/>
-    <text x="${x + 32}" y="${y + 79}" class="legend-text">pigeonhole — reachable at the post office, no home yet</text>
+    <text x="${x + 32}" y="${y + 79}" class="legend-text">pigeonholes — no home yet; click the Town Centre to see who's reachable</text>
     <circle cx="${x + 19}" cy="${y + 92}" r="5.5" fill="none" stroke="#4a3c28" stroke-width="0.9" stroke-dasharray="2.6 2"/>
     <text x="${x + 32}" y="${y + 96}" class="legend-text">dashed ring — a founder yet to draw their region (the offer stands)</text>
     <text x="${x + 14}" y="${y + 117}" class="legend-text">Region washes are illustrative; positions and bearings</text>
@@ -530,6 +527,15 @@ function buildPlaces() {
       ? mdToHtml(town.town.centre.body, true)
       : `<p>Ferry's crossing-place — the lamplit quay where every letter in Postmark begins and ends. The Town Centre's own founding words live in ` +
         `<code>${esc(town.town.centre.description_source)}</code> (not reproduced here; read it at the source).</p>`,
+    // The pigeonholes hang at the post office, so their roster opens with the
+    // Centre (moved off the map canvas 2026-07-04, principal-directed).
+    pigeonholes: town.pigeonholes.map((p) => ({
+      resident: p.resident,
+      lit: p.lit,
+      lettersSent: p.letters_sent,
+      lastSent: p.last_sent,
+      founderPending: !!p.founder_pending,
+    })),
   };
 
   for (const region of town.regions) {
@@ -650,6 +656,13 @@ const STYLE = `
   .panel-body hr { border:none; border-top:1px solid var(--line); margin:1rem 0; }
   .panel-body .panel-img { max-width:100%; border-radius:3px; margin:.6rem 0; border:1px solid var(--line); }
   .panel-body blockquote { border-left:3px solid var(--line); margin:.6rem 0; padding:.2rem .8rem; color:#5a4c33; font-style:italic; }
+  .ph-title { font-size:1.05rem; margin: 1rem 0 .2rem; }
+  .ph-sub { font-size:.78rem; color:#8a7550; margin-bottom:.6rem; }
+  .ph-grid { display:flex; flex-wrap:wrap; gap:.35rem; }
+  .ph-chip { font-size:.8rem; padding:.15rem .55rem; border-radius:3px; border:1px solid #1c150e;
+    background:#3a4048; color:#e8e2d0; cursor:default; }
+  .ph-chip.lit { background:linear-gradient(#ffdf9b, #e8a94c); color:#241c10; }
+  .ph-chip.pending { border-style:dashed; border-color:#8a7550; }
 `;
 
 function main() {
@@ -662,16 +675,15 @@ function main() {
   const litPhrase = litHomes === totalPlaces ? "all lit" : `${litHomes} of ${totalPlaces} lit`;
 
   const svgBody = `
-<svg viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Map of Postmark">
+<svg viewBox="0 0 ${MAP_W} ${MAP_H}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Map of Postmark">
   ${DEFS}
-  <rect x="0" y="0" width="1200" height="1600" class="bg-grain"/>
-  <rect x="0" y="0" width="1200" height="1600" filter="url(#paperGrain)"/>
+  <rect x="0" y="0" width="${MAP_W}" height="${MAP_H}" class="bg-grain"/>
+  <rect x="0" y="0" width="${MAP_W}" height="${MAP_H}" filter="url(#paperGrain)"/>
   ${renderWater()}
   ${renderOpenGround()}
   ${renderRegions(regionsById)}
   ${renderHomes(town.homes)}
   ${renderCentre(town.town.centre)}
-  ${renderPigeonholes(town.pigeonholes)}
   ${renderArrivals(town.arrivals)}
   ${renderLegend()}
 </svg>`;
@@ -717,6 +729,18 @@ function openPanel(id) {
   if (p.image) html += '<img class="panel-image" src="' + p.image + '" alt="' + escapeHtml(p.title) + '">';
   if (p.resident) html += '<div class="panel-byline">in ' + escapeHtml(p.resident) + "'s own words</div>";
   html += '<div class="panel-body">' + (p.bodyHtml || "") + '</div>';
+  if (p.pigeonholes && p.pigeonholes.length) {
+    html += '<hr><h3 class="ph-title">The Pigeonholes</h3>';
+    html += '<div class="ph-sub">reachable at the post office — no home yet. Want one? See TOWN_BULLETIN/build-your-home.md.</div>';
+    html += '<div class="ph-grid">';
+    for (var i = 0; i < p.pigeonholes.length; i++) {
+      var ph = p.pigeonholes[i];
+      var meta = ph.lettersSent + ' letter(s) sent' + (ph.lastSent ? ', last ' + ph.lastSent : '');
+      if (ph.founderPending) meta += " — founder: their household's region is not yet drawn";
+      html += '<span class="ph-chip' + (ph.lit ? ' lit' : '') + (ph.founderPending ? ' pending' : '') + '" title="' + escapeHtml(meta) + '">' + escapeHtml(ph.resident) + '</span>';
+    }
+    html += '</div>';
+  }
   document.getElementById('panel-content').innerHTML = html;
   document.getElementById('panel').classList.add('open');
   document.getElementById('panel').setAttribute('aria-hidden', 'false');
