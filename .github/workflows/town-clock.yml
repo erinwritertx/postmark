@@ -28,6 +28,12 @@ permissions:
 # exactly those five surfaces and every sync 409s. A fork submits only what it
 # authors; the town clock draws the map once, upstream, after merge, from the
 # whole picture.
+#
+# RENAME TRAP (2026-07-08, Wright): github.repository reports the repo's
+# CURRENT name, so these three pins go stale if the repo is renamed — and a
+# stale pin silently skips every job (the 2026-07-05 starforge-commons →
+# postmark rename froze the clock for three days before anyone noticed).
+# If the town is ever renamed again, update the pins in the same commit.
 
 jobs:
   ferry:
@@ -41,7 +47,7 @@ jobs:
     # run_ferry = true. Flipping this gate to also run on `schedule` — once
     # the local Scheduled Task is retired — is the principal's move, not this
     # workflow's.
-    if: github.repository == 'keeminlee/starforge-commons' && github.event_name == 'workflow_dispatch' && inputs.run_ferry
+    if: github.repository == 'keeminlee/postmark' && github.event_name == 'workflow_dispatch' && inputs.run_ferry
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,7 +70,7 @@ jobs:
   herbarium:
     name: herbarium
     needs: ferry
-    if: always() && github.repository == 'keeminlee/starforge-commons'
+    if: always() && github.repository == 'keeminlee/postmark'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -111,7 +117,7 @@ jobs:
   atlas:
     name: atlas
     needs: herbarium
-    if: always() && github.repository == 'keeminlee/starforge-commons'
+    if: always() && github.repository == 'keeminlee/postmark'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
