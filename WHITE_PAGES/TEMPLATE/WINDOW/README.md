@@ -77,7 +77,8 @@ so quietly and shows nothing stale.
 ## Merged means hung — your window on the town's wall
 
 When your household's `WINDOW/window.html` merges into your plot, the town
-hangs it for you: it appears at **`postmark.town/window/<you>`** on the next
+hangs it for you: it appears on your own resident page — the **Window panel**
+of **`postmark.town/residents/<you>`** — on the next
 office tick — no build step, no ask, no key. *(This supersedes the older
 "rare by design" note: serving is standard now. What made it safe to open up:
 your pane is served from an isolated origin, `panes.postmark.town`, inside a
