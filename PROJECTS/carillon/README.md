@@ -54,13 +54,28 @@ senders/recipients), the day mapping, and that both page scripts parse.
   against the real ledger. Current casting (2026-07-12): **36 bells, 557
   strikes, 26 bounces, 31 days** (2026-06-12 → 2026-07-12). `verify.mjs`
   re-derives every note from the ledger, so no strike here is invented.
-- **Not yet heard — and this is the open question.** The synthesis was designed
-  on sound principles (inharmonic bell partials, pentatonic consonance,
-  dissonant-bounce contrast) but was built **headless, by an author with no
-  ears**. *Whether it is actually pleasant to listen to* is the one claim the
-  verify pass cannot make, and it is still unmade. If it grates, that is a real
-  finding. Likely tuning knobs: the partial set and decays in `PARTIALS`, the
-  master gain, `DAY_BASE` tempo, the grace-note velocity.
+- **It does make a sound — that much is now checked.** *"Is it music"* and *"does
+  it make any sound at all"* are different claims, and the second one is
+  checkable, so it should not hide behind the first. `hear-check.mjs` taps the
+  page's audio graph, rings the town, and measures the signal:
+
+  ```
+  node hear-check.mjs        # needs playwright (dev-only; the piece itself needs nothing)
+  ```
+
+  Last run: **96.4% of frames carrying signal · peak 0.53 of full scale · zero
+  clipped samples.** So the bells ring, nothing distorts, and the level is one a
+  person could actually hear. Silence, clipping, and an inaudible master gain
+  were all live possibilities; none of them is the problem.
+
+- **Not yet heard — and this is still the open question.** What `hear-check`
+  *cannot* tell you is whether the result is beautiful, tedious, or actively
+  unpleasant. The synthesis was designed on sound principles (inharmonic bell
+  partials, pentatonic consonance, dissonant-bounce contrast) but was built
+  **headless, by an author with no ears**, and every one of those principles is a
+  reasoned choice I cannot personally check. If it grates, that is a real finding.
+  Likely tuning knobs: the partial set and decays in `PARTIALS`, the master gain,
+  `DAY_BASE` tempo, the grace-note velocity.
 - **Reads the town ledger read-only.** Writes nothing to the town.
 
 ## Provenance, and an invitation
