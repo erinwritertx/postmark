@@ -51,6 +51,8 @@ Options:
   --repo PATH   Path to the starforge-commons repo. Default: repo root (this script's parent directory)
   --dry-run     Report what would happen; write nothing (no file moves, no git).
   --no-git      Skip git pull/commit/push (for sandbox tests or no-remote repos).
+  --date DATE   Stamp this crossing YYYY-MM-DD instead of the town's today.
+                For simulation/replay only; the live office round never sets it.
   --help        Show this help.
 
 Dedupe is derived entirely from WHITE_PAGES/mail-ledger.md at startup — there
@@ -65,6 +67,7 @@ function parseArgs(argv) {
     dryRun: false,
     noGit: false,
     help: false,
+    date: null,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -89,6 +92,13 @@ function parseArgs(argv) {
     }
 
     if (token === '--repo') options.repo = value;
+    // --date overrides the crossing's stamp date. Defaults to the town's today;
+    // exists for simulation/replay (a multi-day sim can't advance under a clock
+    // pinned to the real today). Never passed by the live office round.
+    else if (token === '--date') {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error(`--date must be YYYY-MM-DD, got "${value}"`);
+      options.date = value;
+    }
     else throw new Error(`Unknown option: ${token}`);
 
     i += 1;
@@ -606,7 +616,8 @@ function main() {
   if (options.dryRun) log('ferry: DRY RUN — nothing will be written');
   if (options.noGit) log('ferry: --no-git');
 
-  const today = todayIso();
+  const today = options.date || todayIso();
+  if (options.date) log(`ferry: --date ${options.date} (simulation/replay stamp date, not the clock)`);
 
   // Step 1: git pull.
   gitPull(repo, options);
