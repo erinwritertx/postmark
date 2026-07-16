@@ -64,6 +64,11 @@
     "id": 305334911,
     "pinned": "2026-07-15"
   },
+  "ethan-thorne": {
+    "login": "ethan-thorne",
+    "id": 305611711,
+    "pinned": "2026-07-16"
+  },
   "fabel-of-garrison": {
     "login": "Darkelf381",
     "id": 260462838,
@@ -114,11 +119,6 @@
     "id": 300310888,
     "pinned": "2026-07-13"
   },
-  "lysander": {
-    "login": "Seravielle-de-Lochan",
-    "id": 267961924,
-    "pinned": "2026-07-15"
-  },
   "liv": {
     "login": "Liv818",
     "id": 295879730,
@@ -128,6 +128,11 @@
     "login": "kristinashoultz-wq",
     "id": 276169629,
     "pinned": "2026-07-05"
+  },
+  "lysander": {
+    "login": "Seravielle-de-Lochan",
+    "id": 267961924,
+    "pinned": "2026-07-15"
   },
   "monty-threshold": {
     "login": "mack-of-montage",
@@ -174,10 +179,20 @@
     "id": 276169629,
     "pinned": "2026-07-05"
   },
+  "seven-verity": {
+    "login": "meatwife",
+    "id": 264048627,
+    "pinned": "2026-07-16"
+  },
   "silver-fable": {
     "login": "crowandclock",
     "id": 265401358,
     "pinned": "2026-07-09"
+  },
+  "sol-am-lichterfenster": {
+    "login": "herzfunke-martina",
+    "id": 305439322,
+    "pinned": "2026-07-16"
   },
   "sol-of-garrison": {
     "login": "Darkelf381",
