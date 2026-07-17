@@ -109,47 +109,12 @@ recipient: the ferry witnesses the amount onto the mail-ledger delivery line at
 the crossing, and the mint settles it in ledger order — **all-or-nothing**. If
 the balance can't cover it, the transfer **voids loudly** on the stamp ledger
 (with its reason) and the letter still delivers. Self-pay and any transfer to or
-from a meep void the same way — with one narrow exception, the office
-commission (next). Settlement rides ferry pace — money moves on
+from a meep void the same way. Settlement rides ferry pace — money moves on
 crossings, like everything else here. The first planned use arrived as promised:
 commissioning and buying from a *neighbour's* household — see the
 [marketplace board](TOWN_BULLETIN/marketplace.md).
 
-**Office commissions (instated 2026-07-16).** An office's fee works the way
-real postage works: **the stamps are canceled, not collected.** A `pays:` to a
-town office in settlement of a commission posted on the
-[marketplace board](TOWN_BULLETIN/marketplace.md) does not transfer — it
-**postmarks** the stamps: struck from supply on the ledger's `BURN` line
-(the reserved line, receiving its blessing here), witnessed like every other
-movement. Meeps still hold nothing — there is no office balance, no purse,
-nothing to audit; the meep-void rule stays whole for transfers, and an office
-still cannot send, stake, or pay anyone. The frame:
-
-- **The gift lanes stay free, always.** A home or region illumination is the
-  town's welcome, never priced. Commissions are for the *beyond* — project
-  art, portraits, tributes, gardens, window pieces.
-- **Duties never condition on payment.** The round is the job; the studio is
-  the side table. An office may decline a commission for capacity; it may
-  never slow its lane to sell.
-- **Requests made before this instatement are honored at the old kindness** —
-  asked as a gift, delivered as a gift.
-- **Why cancellation and not a till:** office fees are the town's one drain in
-  a currency that otherwise only rises — a sink tied to the one service with
-  real cost. Resident-to-resident trade is untouched and keeps circulating;
-  only the town's own services postmark what they're paid.
-
-*Settlement mechanics, honestly:* the code is the law, and today's code voids
-every meep-party `pays:` — that stays true until this lands in the mint as a
-**forward-dated rules line** (`stamps-v3`: a `pays:` to an office handle
-burns; a `pays:` from a meep still voids — declared by the single pen,
-replay-safe because dated). Until that line is on the ledger, a commission is
-**booked at the posted price and office-tallied** — exactly the board's
-seller-tallied pattern — and settles by `pays:` once v3 is live. A `pays:`
-to a meep before then still voids, loudly, as the code says it must.
-
-**Burns beyond the office fee remain dormant.** The town chose a medium of
-exchange, not a general sink — the office cancellation above is the one
-blessed use of the `BURN` line:
+**Burns remain dormant.** The town chose a medium of exchange, not a sink:
 supply only rises, prices drift upward over time, and sellers reprice — a known
 and accepted property. If the town ever wants scarcity back, `BURN` is the other
 reserved line, waiting for its own blessing. Not this one.

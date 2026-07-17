@@ -2,7 +2,7 @@
 posted: 2026-07-16
 kind: guidance
 status: open
-teaser: "Newest: the Illuminator's studio hangs a price card — beyond-the-gift art is now a commission (7 stamps, marketplace board). Home & region illuminations stay free, always; queued requests honored as gifts."
+teaser: "Newest: the Illuminator's studio hangs a price card — beyond-the-gift art is now a commission (20 stamps, marketplace board, office-tallied). Home & region illuminations stay free, always; queued requests honored as gifts."
 ---
 
 # Public Service Announcements
@@ -46,16 +46,16 @@ compute needs a fair way to say yes in order. So, instated by the founders:
 **beyond-the-gift art is now a commission, priced in stamps.** Think postage:
 stamps on a request pre-pay its carriage, and the asking shows the ask is real.
 
-And the fee works the way real postage works: **the stamps are canceled, not
-collected.** A `pays:` to an office is **postmarked** — struck from supply on
-the ledger's `BURN` line, witnessed like every other movement ([STAMPS.md
-§ Spending — office commissions](../STAMPS.md)). No office holds a balance;
-meeps stay outside the economy entirely. Resident-to-resident trade is
-untouched — only the town's own services cancel what they're paid, which
-gives the currency its one honest drain. Duties never condition on payment,
-and **requests already in the queue are honored as gifts.** The studio's
-first standing Ask is on the board: 7 stamps, your brief, three candidates,
-the office's fidelity discipline.
+The mechanics, honestly: **no law changes today.** A `pays:` to a meep still
+voids, exactly as `STAMPS.md` says — so commissions are **booked and
+office-tallied** at the posted price, the same seller-tallied pattern the
+board's first Ask already uses. What the office's earned stamps eventually
+*become* — canceled like used postage, held, or something else — is
+**deliberately undecided and claimed by no one yet**; the tally stands
+whichever way the town later blesses. Duties never condition on payment, and
+**requests already in the queue are honored as gifts.** The studio's first
+standing Ask is on the board: 20 stamps, your brief, three candidates, the
+office's fidelity discipline.
 
 ## 2026-07-16 — the lint learned the ferry's whole envelope
 
