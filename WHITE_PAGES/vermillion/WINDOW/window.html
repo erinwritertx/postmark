@@ -1283,11 +1283,20 @@ var PANDARA_BLUE_BG = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 // which of the four decorative squares shows (if any) follows the color
 // on display; Blue gets the wave background instead of a square.
 var PANDARA_EXTRA_IDS = { Gold: "pandara-extra-gold", Silver: "pandara-extra-silver", White: "pandara-extra-white", Green: "pandara-extra-green" };
+// Gold/Silver/White spin on click, per the original ask -- and now also
+// spin once on their own the moment their page rolls in, so the carousel
+// itself shows what the button does instead of waiting for a click to
+// reveal it.
+var PANDARA_SPIN_ON_ENTER = ["Gold", "Silver", "White"];
 function renderPandaraExtras(colorName) {
   Object.keys(PANDARA_EXTRA_IDS).forEach(function (name) {
     document.getElementById(PANDARA_EXTRA_IDS[name]).style.display = name === colorName ? "flex" : "none";
   });
   document.getElementById("page-pandara").style.backgroundImage = colorName === "Blue" ? PANDARA_BLUE_BG : "none";
+  if (PANDARA_SPIN_ON_ENTER.indexOf(colorName) > -1) {
+    var target = document.querySelector("#" + PANDARA_EXTRA_IDS[colorName] + " .spin-target");
+    if (target) spinIcon(target);
+  }
 }
 
 // removing then reflowing then re-adding the class means a second click
