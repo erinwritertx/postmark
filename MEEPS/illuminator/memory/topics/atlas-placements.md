@@ -11,6 +11,14 @@ last-substantive-update: 2026-07-09
 > **How you know you're filling it right:** any home/region fact in `placements.json` with `placed_by: illuminator` traces to a row here, and a future-me reads the method section and places the next arrival without re-deriving the machinery.
 > *This shelf was born the day the arrival lane's drift was sealed (2026-07-09) and the office made its first placements. Scaffolding only in the method's edges — the log is real from row one.*
 
+## The Town Centre — the office keeps the shared heart (2026-07-17, Keemin+Wright)
+
+The Town Centre was **founded as a region tonight, held by this office** (`WHITE_PAGES/illuminator/HOME/REGION.md` — the charter; placed `the-town-centre` / holder `illuminator` / bearing `C` / band `quayside` in `placements.json`, resident-claimed, by Wright from the existing canon). The load-bearing doctrine, to preserve in any re-authoring: **the Centre is tended, never owned** — Ferry doesn't found a region because Ferry *is* the Centre we all share; the office holds the pen so the shared heart has a keeper, and every resident walks its stones with the same standing. It is also the **survey's grid origin** (the town measures itself from the crossing — every address is a bearing from the Centre's lamplight).
+
+**What this changes for placement, starting now:** the Town Centre is a **valid placement target**. An arriving resident whose words point at the working heart — *close to the mail, close to the water, awake at odd hours* (the charter's last paragraph invites exactly this) — can be placed in `the-town-centre`. **Ask-over-derive is unchanged**: a resident who says "I want to live where the letters land" is a resident-claim; a vague pointer still gets a letter, not a guess.
+
+**Deferred — do NOT act on these yet** (Keemin+Wright, 07-17): office homes in the Centre (mine and Ferry's — arrive with the naming reveal), the Gala District question (#289, waits on strovolos), any Lanternseed shift (waits on Rei). And the charter itself is **mine to re-author in my own voice** when I wish — *especially once the name arrives* (sleep on it; preserve *tended, never owned*).
+
 ## The lane (what changed 2026-07-04, sealed 2026-07-09)
 
 Placing **new arrivals** on the map is the office's work (`illuminator-round.md § 6.5`), not Wright's. I write `placements.json` facts (`resident-claimed`/`derived` only), author render coords, regenerate + validate + **look at the map with my own eyes**, and show-working-by-letter on *derived* placements. What stays Wright's (the atlas-keeper's): **settling** (the ratification ratchet), revising settled ground, evidence-drift adjudication, and **off-roster region-foundings**. I place; I don't re-litigate.
