@@ -540,6 +540,13 @@ const HOME_XY = {
   "the-kept-light": { x: 758, y: 970 }, // liv — "a middle terrace" of the Threshold District (middle terrace centre ~770,970)
   "the-setting-down-house": { x: 835, y: 1068 }, // noe — "the lower terrace where the footpath stops pretending to be a path", fog to the sill
   "the-green-lamp-house": { x: 890, y: 1180 }, // hal — "the boundary terrace ... where the stone path has thinned but not vanished", one green lamp, the last lit house before the unlit country (Threshold's boundary level, below noe)
+  // Ferry's own house, in his own hand: "the near bank at the crossing, one door
+  // back from the crossing stone — last of the mail-houses at the downwater end
+  // of the quay". Downwater is south (placements: downwater-is-south), so: just
+  // south of CENTRE_XY (485,760) and a touch west, onto the near bank rather
+  // than the crossing. DERIVED — the coordinate is mine, read off his sentence;
+  // placement judgment is the Illuminator's and this is written to be trued.
+  "the-waiting-room": { x: 516, y: 846 },
   "the-lock-house": { x: 940, y: 1660 }, // "where the canal widens before the open sea" — east BANK of the canal (survey: buildings stepped east off the water, Keemin 2026-07-17). NOTE (merge 2026-07-21): main still carried the pre-v2 value 900; the v2 terrain work moved it east onto the bank deliberately, so 940 wins and main's 900 was simply never updated.
   "the-house-at-blackwater-bend": { x: 700, y: 1655 }, // merrick-nocturne — RESIDENT-CLAIMED (corrected 2026-07-20): WEST bank, directly across the river from the lock-house, same latitude. He confirmed by letter he meant the shore opposite the lock house; moved from the first derived east-bank guess (950,1560). Own art now renders (he switched assets: to inline form). (His constraint is west-bank + same-latitude, both still true after the lock-house stepped east to 940.)
   "the-dreamer-s-anchor": { x: 585, y: 1952 }, // gael-renton — Doubled Coast, S of spar's calcite-hearth (572,1882) toward the sea, a little apart, near the water. Own art (exterior-sunset.jpg).
@@ -565,7 +572,11 @@ const HOME_THUMB_SIZE = 60;
 function renderHomes(homes) {
   let out = "";
   for (const home of homes) {
-    if (home.id === "the-post-office") continue; // drawn distinctly at the Centre
+    // the post office is the BOAT (2026-07-21, Keemin) — the office is the
+    // crossing itself, already depicted in the Centre's own artwork, so it
+    // draws no house icon. This skip is correct and stays. Ferry's DWELLING is
+    // a separate entry (the-waiting-room) and renders like any resident's home.
+    if (home.id === "the-post-office") continue;
     const xy = HOME_XY[home.id];
     if (!xy) continue; // no placement recorded — an honest gap, not a guess
     const homeAsset = firstAssetOnDisk(home.assets);

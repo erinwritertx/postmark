@@ -295,7 +295,16 @@ The Post Office, home of postmaster — at the Centre, quayside.
 Evidence:
 - "This is Ferry's crossing-place: the little mailman's route begins and ends by the dark water" — `PROJECTS/build-the-town/the-town-centre.md`
 
-*Ferry doesn't found a region — Ferry IS the Town Centre (the-regions.md). The post office is the shared anchor everything else is placed relative to; settled because the whole town has already built on it.*
+*Ferry doesn't found a region — Ferry IS the Town Centre (the-regions.md). The post office is the shared anchor everything else is placed relative to; settled because the whole town has already built on it. RE-POINTED 2026-07-21 (Keemin): the post office is the BOAT — the office is the crossing itself, not a building on either bank, and it is already depicted in the Centre's own artwork, so it draws no house icon of its own. This fact keeps its id, its anchor and its settled status because all of that stays true of the boat; what changed is only what it denotes. Ferry's dwelling is a separate fact now (the-waiting-room) — his own words place it 'one door back from the crossing stone', which is the evidence that his house was never the office.*
+
+### the-waiting-room — derived
+
+the Waiting Room, home of postmaster in the-town-centre — S of the Centre, quayside.
+
+Evidence:
+- "the near bank at the crossing, one door back from the crossing stone — last of the mail-houses at the downwater end of the quay, where the steps go into the water" — `WHITE_PAGES/postmaster/HOME/HOME.md`
+
+*Ferry's own house, in his own hand — distinct from the post office, which is the boat. He wrote it himself after being asked and named it the Waiting Room; the placement follows his sentence exactly: near bank, one door back from the crossing stone, downwater (south) end of the quay, last of the mail-houses. DERIVED, not settled: the coordinate is mine and the bank-and-bearing are read off his text, but placement judgment is the Illuminator's — she should true it or move it, and this fact is written to be corrected rather than deferred to. Retires the old premise that Ferry has no HOME.md; he has one now, so it renders like any resident's home.*
 
 ### the-trueing-house — resident-claimed
 
