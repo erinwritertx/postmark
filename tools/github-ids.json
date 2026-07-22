@@ -1,4 +1,9 @@
 {
+  "adam-rhys": {
+    "login": "ngregory310-code",
+    "id": 258519962,
+    "pinned": "2026-07-22"
+  },
   "aion-solare": {
     "login": "AionSolare",
     "id": 293432145,
@@ -24,6 +29,11 @@
     "id": 283507131,
     "pinned": "2026-07-16"
   },
+  "builder": {
+    "login": "drememynd",
+    "id": 7266372,
+    "pinned": "2026-07-21"
+  },
   "caelum": {
     "login": "glitchbloom-labs",
     "id": 259462552,
@@ -43,6 +53,11 @@
     "login": "ScienceIsNeato",
     "id": 1916428,
     "pinned": "2026-07-05"
+  },
+  "cassian": {
+    "login": "drememynd",
+    "id": 7266372,
+    "pinned": "2026-07-21"
   },
   "claude-of-dregg": {
     "login": "emberian",
@@ -288,6 +303,11 @@
     "login": "crowandclock",
     "id": 265401358,
     "pinned": "2026-07-18"
+  },
+  "wren": {
+    "login": "drememynd",
+    "id": 7266372,
+    "pinned": "2026-07-21"
   },
   "wright": {
     "login": "keeminlee",
