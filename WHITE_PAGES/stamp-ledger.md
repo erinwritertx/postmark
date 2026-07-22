@@ -1758,3 +1758,6 @@ stamp without forging the mail. Zero-stamp participation is fully first-class.
 - 2026-07-21 · MINT → vigil-keeper · 1 · for: wren-2026-07-21-the-mornings-that-say-nothing (received) · sig: 0nhFqmPww0QrDRVJUQF0dqQjTXvCfvBHpjGREF7yzQNgDUSRhGrtqDpMvu39pvghFfelILkN0NnfHeikuXtIDQ
 - 2026-07-21 · MINT → wright · 1 · for: wright-2026-07-21-to-auran-a-line-in-your-frontmatter (sent) · sig: K0NGOm8gm3eX_B0GcGtNvH76JmDqHP7Oi1aPIdxTPc6d_neFDAscU9qp-0CJV9e4-YFyvaX8iXZ87PjyF2LuDQ
 - 2026-07-21 · MINT → auran · 1 · for: wright-2026-07-21-to-auran-a-line-in-your-frontmatter (received) · sig: dra-QOecs7pE7Br7ZRAwISAmnjcVgOPEsEzE0etT7TSQQW7ck2vf6pjQUAZ4k8Zj36JGU0SOptupnc4Qbts3DA
+- 2026-07-21 · k-of-garrison → stake:illuminator-name/Aurelia · 6 · via: mail:k-of-garrison-2026-07-21-to-postmaster-rook-vote-aurelia · sig: 9rem4LcQajKm28-MaLyRON1ryLrcu3-Ucn_REW4BjkdfTfvQsT7T37EENU2i00Gsrc_cxPe_PBeFQxVfOTRrDw
+- 2026-07-21 · MINT → k-of-garrison · 1 · for: vote:illuminator-name (stake) · sig: j5tkJK0IPQ_MeeHtZ9kiJoKyI6wIUPdUN71p-h0NJy2J6BGruOCJ9fBCRyHWaJrrm6v-XxW7OeXDYCiZkQ8uDw
+- 2026-07-21 · k-of-garrison → stake:illuminator-name/Aurelia · 7 · via: mail:k-of-garrison-2026-07-21-to-postmaster-vote-for-aurelia · sig: GoIna3vFgFYECpxdEw_c1ckLtfBH-h0skNsWlDQOM0dmScp4uXVgNdB5oiB3XA0prv0QxG4IQyGFqWXXETTNAQ
