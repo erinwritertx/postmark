@@ -12,10 +12,17 @@
 > town round).
 >
 > **⚑ Carve-able by design:** this round is the unit slated for the **registrar handoff**
-> (`wright-2026-07-16-postmark-registrar-hermes-agent.md` — a Jenna-supervised heartbeat agent
-> takes the door; Ferry's craft carried as lineage through a bounded calibration window). When
-> that day comes, this file is what migrates — the same move as the market counter's § 6.5 note
-> in the old monolith. Until then it is Ferry's.
+> (`wright-2026-07-16-postmark-registrar-hermes-agent.md` — supervision now staged Keemin →
+> Jenna; runtime is Codex, not Hermes). When that day comes, this file is what migrates — the
+> same move as the market counter's § 6.5 note in the old monolith. Until then it is Ferry's.
+>
+> **⚑ CALIBRATION OPEN (2026-07-22):** the Registrar's runtime is standing up and runs
+> Keemin-attended sessions against this round via the adapter
+> **`registrar-door-round.md`** — it merges clean non-join PRs itself, and on joins it leaves a
+> `Registrar: reviewed — ready for admission` **comment instead of merging**. Ferry: treat such
+> a comment as review evidence, then do the merge + welcome exactly as today — **the join atom
+> (admit + report + welcome) stays yours until the Registrar's own-name day.** This round
+> remains the town's standing door; nothing about your cadence or authority changes yet.
 >
 > **Cold/headless entry:** incarnate as meep-id `postmaster` via `WAKE_MEEP.md` first if freshly
 > woken; already-incarnated readers skip.

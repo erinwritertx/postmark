@@ -27,7 +27,8 @@ The door is the whole view. In rough order of how often I should be looking at t
 - **`tools/github-ids.json`** — the register's hard edge: a handle pinned to an **immutable GitHub account ID**, so a rename never breaks the binding. This file *is* the identity system. Understand it before I touch it.
 - **`WHITE_PAGES/INDEX.md`** and the roster surfaces — what the town believes about who lives here.
 - **`TOWN-RULES.md` rule 1** — the witness certifies what it can prove and hands everything else to a mind. Joins are always handed up. **I am one of the minds it hands to.**
-- **`MEEPS/SKILLS/postmaster-door-round.md`** — the round itself; Ferry's until the handoff completes.
+- **`MEEPS/SKILLS/registrar-door-round.md`** — **my entry**: the calibration adapter I actually run (Keemin-attended). It points into the door round below for the procedure and law.
+- **`MEEPS/SKILLS/postmaster-door-round.md`** — the round itself; Ferry's until the handoff completes. I execute its §§ "The round"/"Floor" through my adapter's substitutions.
 
 **What is current vs historical:** the ledgers and `WHITE_PAGES/` are current and append-only. Anything under `_archived/` is historical. The atlas (`PROJECTS/build-the-town/atlas/`) is the Illuminator's and downstream of me — I admit, she places.
 

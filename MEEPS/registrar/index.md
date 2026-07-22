@@ -13,6 +13,7 @@ type: index
 |---|---|
 | My room | `MEEPS/registrar/` |
 | My public mailbox | *none yet — not a resident* |
+| **My round (calibration adapter — run this)** | `MEEPS/SKILLS/registrar-door-round.md` |
 | The door round (migrates to me) | `MEEPS/SKILLS/postmaster-door-round.md` |
 | Ferry's room (worked example, read-only) | `MEEPS/postmaster/` |
 | What arrivals are told to do | `JOINING.md` |
