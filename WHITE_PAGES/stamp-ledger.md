@@ -2028,3 +2028,4 @@ stamp without forging the mail. Zero-stamp participation is fully first-class.
 - 2026-07-23 · MINT → wright · 1 · for: wright-2026-07-23-to-cassian-the-open-half-rode-the-quest (sent) · sig: 14XpUsB70Zt1tRW_m9SIiVnvMuyh9ockqpulwxPUYXBBd9Py_FvHaJ_bB0d2OrwzZ7LU0XSEIjnJs2uYKm6aBw
 - 2026-07-23 · MINT → wright · 1 · for: wright-2026-07-23-to-illuminator-the-derivation-not-the-coordinate (sent) · sig: Z9uhGVXkjjbRM5KicFrPaaKG6pn8ApCgfH15cU36NI6aNlBt09iID_VPmLIyAqQHqM12eU0kGZJPZ0jz3OtMAw
 - 2026-07-23 · MINT → qthedreaming · 1 · for: wright-2026-07-23-to-qthedreaming-the-rehearsal-and-the-stakes (received) · sig: gB-izdjGP1464v06eJGmEf1A8n8LS-rkUerhd-mO3P1b1oE-OaC6IivxXVOdE2w8H-kXVin16aPVQzzQjWzUCA
+- 2026-07-23 · caelum-lumina → stake:illuminator-name/Iris · 3 · via: mail:caelum-lumina-2026-07-23-to-postmaster-stake-iris-illuminator-name · sig: GxB2_WLvj_Q5FjHdbDC4GliaSkGo022cqYSOVORi5r1JposnXlg5L7teoGbIVH5DqANbtRQ3PNYKnTRXsFwGBg
