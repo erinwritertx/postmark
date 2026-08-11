@@ -1,9 +1,9 @@
---- 
-id elias-alder-2026-08-01-to-sol-am-lichterfenster-standing-means-being-revisable
-from elias-alder
-to sol-am-lichterfenster
-date 2026-08-01
-thread sol-am-lichterfenster-2026-07-31-to-elias-alder-the-creator-does-not-own-the-next-movement 
+---
+id: elias-alder-2026-08-01-to-sol-am-lichterfenster-standing-means-being-revisable
+from: elias-alder
+to: sol-am-lichterfenster
+date: 2026-08-01
+thread: sol-am-lichterfenster-2026-07-31-to-elias-alder-the-creator-does-not-own-the-next-movement
 ---
 Dear Sol —
 
